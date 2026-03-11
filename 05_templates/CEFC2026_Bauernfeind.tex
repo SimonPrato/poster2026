@@ -1,0 +1,95 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{makecell}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Numerical Investigation of the Coupling Behavior of Electrically Small Magneto-Electric Antennas in TEM Cells}\\
+%{\footnotesize \textsuperscript{*}Note: Sub-titles are not captured in Xplore and
+%should not be used}
+%\thanks{Identify applicable funding agency here. If none, delete this.}
+%}
+\author{\IEEEauthorblockN{Simon Prato}
+\IEEEauthorblockA{\textit{\makecell{Institute of Fundamentals and Theory\\ in Electrical Engineering}} \\
+\textit{Graz University of Technology}\\
+Graz, Austria \\
+simon.prato@student.tugraz.at}
+\and
+\IEEEauthorblockN{Domink Kreindl}
+\IEEEauthorblockA{\textit{\makecell{Institute of Fundamentals and Theory\\ in Electrical Engineering}} \\
+\textit{Graz University of Technology}\\
+Graz, Austria \\
+dominik.kreindl@student.tugraz.at}
+\and
+\IEEEauthorblockN{Thomas Bauernfeind}
+\IEEEauthorblockA{\textit{\makecell{Institute of Fundamentals and Theory\\ in Electrical Engineering}} \\
+\textit{Graz University of Technology}\\
+Graz, Austria \\
+t.bauernfeind@tugraz.at}
+}
+
+\maketitle
+
+\begin{abstract}
+The IC stripline test method is a standardized test method used to characterize the electromagnetic behavior of integrated circuits (ICs), particularly unwanted radiation behavior and sensitivity to external electromagnetic fields. This test method is based on the principle of TEM (transverse electromagnetic) cells. Due to the internal geometry of the IC's bond wires, parasitic electrically short electric and magnetic antennas emerge in the frequency range under consideration. In this contribution, the coupling behavior of these parasitic antennas to the IC stripline will be fundamentally investigated using the finite element method.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Electromagnetic Compatibility, TEM Cell, Dipole Moments, Finite Element Method.
+\end{IEEEkeywords}
+
+\section{Introduction}
+Regardless of the application, a bonding wire is typically necessary to connect the semiconductor chip to the corresponding packaging in order to enable signal transmission to the associated circuit. Due to their geometry, these bonding wires inevitably create current loops, which can cause unwanted interference radiation at fast signal rise times. One simple way to reduce this radiation is to add electrically conductive shielding materials \cite{b1}. However, this approach is costly and ineffective in optical sensor ICs where e.g. vertical-cavity surface emitting lasers (VCSELs) \cite{b2} are used, as corresponding apertures are required to conduct optical signals to and from the IC. The idea now is to influence the unwanted interference radiation by optimizing the bonding wire geometry specifically. This can be achieved by exploiting canceling effects, for example. However, this requires a fundamental understanding of the coupling mechanisms of the parasitic interference emitters in the standardized IC stripline test. In this article, we first examine the characteristic frequency behavior of electrical and magnetic radiation sources observable from the measurement using a generic TEM cell \cite{b3} and FEM simulations, and then extend this to the IC stripline test method. The aim is to replace parasitic radiation sources, such as bond wires, with corresponding dipole moments. This will enable an initial evaluation of the behavior of unwanted radiation at an early design stage, based on reduced models acting as digital twins.
+
+\section{IC stripline emission measurements}
+The IC stripline test methodology \cite{b5} is derived from the TEM cell approach \cite{b3} and provides a standardized means for assessing the electromagnetic immunity of packaged integrated circuits. The operating principle of the IC stripline is based on the propagation of a TEM wave within a coaxial-like structure, as shown in the cross-sectional view in Fig.~\ref{striplinefig}.
+The IC device under test (DUT) is mounted upside down on a test printed circuit board (PCB) with large ground plane and positioned between the septum and the grounded enclosure of the IC stripline. The septum serves as an extension of the inner conductor of the coaxial transmission line and is electrically connected to a voltage measurement instrumentation, e.g. realized either by an EMI receiver or a vector network analyzer (VNA). The septum is designed such that the wave impedance of the IC stripline is given to be 50 Ohm to enable a reflectionless interconnection to the measurement device.\\Power and signal lines required for IC DUT operation are routed through dedicated vias in the test PCB to ensure a defined and reproducible electrical interface.
+Based on the terminal voltages measured at the IC stripline, the dipole moments of the IC DUT can be quantitatively determined \cite{b6}. The magnitudes of the electric dipole moment $m_e$ and the magnetic dipole moment $m_m$ are given by the relationships
+\begin{equation}
+|m_e| = \frac{|U_1 + U_2| h}{Z_W}, \label{eq1}
+\end{equation}
+\begin{equation}
+|m_m| = \frac{|U_1 - U_2| h Z_0}{Z_W}. \label{eq2}
+\end{equation}
+In \eqref{eq1} and \eqref{eq2} $h$ is the distance between the septum of the stripline and the DUT (see also Fig.~\ref{striplinefig}), $Z_W$ is the wave impedance of the stripline, $Z_0$ is the intrinsic free-space wave impedance, and $U_1$ and $U_2$ are the voltages at the stripline terminals, respectively. It should be noted at this point, that by using \eqref{eq1} and \eqref{eq2} the effective dipole moments of the IC DUT are determined. Furthermore, due to the geometry of the IC stripline, especially the coupling behavior of the magnetic dipole moment is highly sensitive to the orientation of the currents loops relative to the septum.\\
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.5\textwidth]{s12_meas_1.png}}
+\caption{Cross-sectional view of the standardized IC stripline connected to a VNA for measuring the terminal voltages at the stripline ports.}
+\label{striplinefig}
+\end{figure}
+
+\section{Test structures for investigating the coupling behavior and preliminary results}
+Clearly, it is not very effective to investigate the fundamental coupling behavior using a complete IC model, as this usually involves a large number of bonding wires and other radiating structures. This means that only effective dipole moments can be determined. Hence, this makes it difficult to assign the determined moments to individual structures in the IC. Simple equivalent test structures with pronounced magnetic and/or electric dipole moments shall therefore be developed to enable specific conclusions to be drawn about the coupling behavior of these structures and, consequently, the respective equivalent dipole moments. Due to the physical dimensions of ICs compared to the wavelengths in the frequency range up to 3 GHz, these structures can be considered electrically short. Fig.~\ref{loop} shows a test structure in the form of a rectangular loop antenna with an air gap. Due to its loop antenna properties, this structure exhibits a pronounced magnetic dipole moment perpendicular to the surface spanned by the loop. The small air gap additionally exhibits an electric dipole moment. Furthermore, as can be seen from Fig.~\ref{striplinefig} also the IC stripline itself shows a rather complex geometry, which would result in a complex FEM-model and rather high computational effort. Therefore, in a first step, a generic TEM cell with rectangular cross section has been developed to enable computational effective investigations of the coupling effects in such TEM cells.\\
+Fig.~\ref{loop_results} shows the electric and magnetic dipole moments obtained from the FEM simulation of the generic TEM cell with \eqref{eq1} and \eqref{eq2}. As can be seen, the small air gap results in an enhanced electric dipole moment compared to the magnetic dipole moment. Interestingly, the increase of the electric dipole moment with the frequency shows a linear behavior. For standard loop antennas without the small air gap, this is not the case.\\
+At the conference as well as in the full paper, this behavior is discussed into more details. Furthermore, other test structures such as center feed dipole structures or test structures which rely on the principle of so called PIFAs (Planar Inverted F Antennas) will be investigated. Finally, these test structures shall be used for investigating the canceling effects to enable the optimization of the bonding wire geometry of ICs.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.4\textwidth]{test_loop.png}}
+\caption{Principle sketch of an electrically short loop antenna with small air gap. This specific design shall exhibit magnetic and electric coupling to the TEM cell.}
+\label{loop}
+\end{figure}
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.42\textwidth]{gapped_loop_moments_corr.png}}
+\caption{Obtained equivalent magnetic and electric dipole moment of the loop antenna with the small air gap. Note: For comparison purposes, the electric dipole moment is scaled with the intrinsic wave impedance.}
+\label{loop_results}
+\end{figure}
+
+\begin{thebibliography}{00}
+\bibitem{b1} B. Conley, et al., ``Shielding Methods for Gigahertz-Frequency Wideband Analog-Integrated Circuits,'' IEEE Transactions on Electromagnetic Compatibility, Vol. 58, No. 4, pp. 1041-1051, 2016.
+\bibitem{b2} D. Kreindl, B. Weiss, C. Stockreiter, T. Bauernfeind, M. Kaltenbacher, and M. Faccinelli, ``Measurement and Simulation Methodology for Characterizing the Shielding Effectiveness of Coating Materials for Optical Sensors,'' 2023 International Symposium on Electromagnetic Compatibility--EMC Europe, pp. 1-6, 2023.
+\bibitem{b3} T. Ostermann and B. Deutschmann, ``TEM-Cell and Surface Scan to Identify the Electromagnetic Emission of Integrated Circuits,'' Proceedings of the 13th ACM Great Lakes symposium on VLSI, pp. 76-79, 2003.
+\bibitem{b5} IEC 61967-8; Integrated Circuits-Measurement of Electromagnetic Emissions-Part 8: Measurement of Radiated Emissions-IC Stripline Methode. International Electrotechnical Commission: Geneva, Switzerland, 2013.
+\bibitem{b6} A. Boyer and S. Ben Dhia, ``Low-cost Broadband Electronic Coupler for Estimation of Radiated Emission of Integrated Circuits in TEM Cell,'' IEEE Transactions on Electromagnetic Compatibility, Vol. 63, No. 2, pp. 636-639, 2020.
+\end{thebibliography}
+
+\end{document}

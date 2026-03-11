@@ -1,0 +1,154 @@
+POSTER 2026 — PLAN (Updated after reviewing Poster_2026.zip + new session info)
+=================================================================================
+Conference : CEFC 2026 (Computation of Electromagnetic Fields Conference)
+Authors    : Simon Prato¹, Dominik Kreindl¹, Thomas Bauernfeind¹
+Affiliation: ¹ Institute of Fundamentals and Theory in Electrical Engineering,
+               Graz University of Technology, Graz, Austria
+Building on: ACES 2024 — "Near Field EMI Coupling-Mechanisms of MLCCs"
+
+CONFIRMED PAPER TITLE
+----------------------
+"Capacitive and Inductive Near-Field Coupling of Electrically Small
+ Antennas in TEM Cells via Equivalent Circuit Models"
+
+CORE RESEARCH QUESTION
+-----------------------
+Bond wires in ICs act as parasitic electrically-short antennas (electric AND
+magnetic dipoles) that radiate at fast signal rise times.
+→ Standard fix = metallic shielding. But VCSELs need open apertures → shielding
+  is not applicable.
+→ Alternative: develop an equivalent circuit (EQC) to model the near-field
+  coupling of electrically small structures to a TEM cell using lumped elements.
+→ EQC advantage: reveals coupling mechanisms and is far faster than FEM.
+→ Validate EQC against FEM results for monopole antenna and loop antenna.
+
+TWO-PAGE PAPER STRUCTURE
+=========================
+
+--- CHAPTER 1: INTRODUCTION ---
+Closely follows the introduction of Dominik Kreindl's paper (ACES2024_Kreindl_Official.pdf).
+
+Key content:
+- Motivation: shielding of a VCSEL device in an IC stripline environment is
+  not possible, because the light of the device must pass through.
+- A TEM cell is used for FEM investigations because its working principles
+  are similar to those of the IC stripline (i.e., TEM wave propagation).
+- Justification for EQC approach: the antenna is electrically small, so its
+  near-field coupling to the TEM cell can be represented with lumped elements.
+  → EQC provides physical insight into coupling mechanisms.
+  → Circuit simulations are orders of magnitude faster than FEM.
+- Brief explanation of why IC tests in IC striplines are always electrically short.
+- Theory developed for the TEM cell geometry.
+- Explanation of why electrically short devices can be effectively modeled
+  with dipole moments (electric dipole moment me, magnetic dipole moment mm).
+
+References: Dominik Kreindl's paper (ACES 2024), IEC 61967-8
+See also: eqc.txt for detailed EQC formulations for both antenna types.
+
+
+--- CHAPTER 2: TEM CELL MEASUREMENT ---
+Based on the following references:
+  [O1] T. Ostermann and B. Deutschmann, "TEM-Cell and Surface Scan to
+       Identify the Electromagnetic Emission of Integrated Circuits,"
+       Proceedings of the 13th ACM Great Lakes symposium on VLSI, pp. 76–79, 2003.
+  [O2] Same reference (duplicate citation noted — verify with supervisor).
+  [D]  Documentation.pdf (present on the filesystem — read for further details).
+
+Key content:
+- Overview of TEM cell measurement technique for IC emission characterization.
+- Physical setup: DUT placed inside TEM cell, terminal voltages U1, U2
+  measured via VNA at the two output ports.
+- Dipole moment extraction equations:
+    |me| = |U1 + U2| · h / ZW          [electric dipole moment]
+    |mm| = |U1 − U2| · h · Z0 / ZW    [magnetic dipole moment]
+  where h = septum–DUT distance, ZW = wave impedance (50 Ω), Z0 = 377 Ω.
+- Why this approach is suitable for electrically short devices.
+
+TODO: Read Documentation.pdf for additional measurement details and figures.
+
+
+--- CHAPTER 3: EQUIVALENT CIRCUIT + RESULTS ---
+
+3a. Equivalent circuit for the monopole antenna (capacitive coupling dominant):
+- Antenna modeled as RLC series circuit (short electric dipole, Chu 1948).
+  C_A dominates at low frequencies; L_A represents stored magnetic energy;
+  R_A accounts for radiated power.
+- Full circuit: antenna EQC extended with TEM cell model (L_T, C_T, symmetrically split).
+- Coupling elements: C_k models electric coupling (displacement current → me);
+  mutual inductances M_{A,T1} and M_{A,T2} model magnetic coupling (→ mm).
+- For the monopole: mutual inductances negligible (M ≈ 0), C_k ≈ 1.68 pF.
+- EQC parameters (C_A, L_A) derived from free-space FEM model via stored energy.
+
+3b. Equivalent circuit for the loop antenna (both electric and magnetic coupling):
+- Reduced EQC: R_A, L_A, C_A (ohmic loss and internal inductance neglected, PEC).
+- Same extended circuit structure as monopole but with non-negligible M_{A,T1/2}.
+  Both C_k (electric) and M (magnetic) coupling paths are active.
+- C_A = 38.2 fF, L_A = 2.14 nH (from free-space FEM energy extraction).
+
+3c. Dipole moment extraction from EQC (general two-step procedure):
+- Step 1: identify source quantities — displacement current through C_k (→ me),
+  induced voltages across L_{T1}, L_{T2} via mutual inductance (→ mm).
+- Step 2: apply Kirchhoff's laws to find fraction of each source reaching R1, R2.
+- Output voltages V'_{1,2} (magnetic) and V''_{1,2} (electric) superimposed.
+- Modal wave amplitudes a_TEM, b_TEM computed → dipole moments via standard
+  extraction equations.
+
+3d. Phase difference:
+- The PHASE DIFFERENCE between me and mm is the main indicator for the
+  balance between electric and magnetic dipole moment magnitudes.
+- Key physical insight and distinguishing feature of this EQC approach.
+
+3e. Comparison FEM vs. EQC:
+- Results for monopole antenna: me vs. frequency (EQC vs. FEM).
+- Results for loop antenna: me and mm vs. frequency (EQC vs. FEM).
+- EQC results derived using scripts in the /scripts folder:
+    scripts/eqc-cap-antenna/   → monopole (capacitively coupled) EQC
+    scripts/eqc-ind-antenna/   → loop (inductively coupled) EQC
+    scripts/evaluate-moments/  → compute dipole moments over frequency
+    scripts/generic-plotting/  → plot results
+
+
+FIGURES AVAILABLE
+-----------------
+- test_loop.png                  → Gapped loop antenna sketch
+- gapped_loop_moments_corr.png   → me and mm vs. frequency (FEM result)
+- gapped_loop_moments.png        → (possibly older version)
+- s12_meas.png / s12_meas_1.png  → IC stripline cross-section / meas. setup
+- VCSEL.png                      → VCSEL image for motivation
+- antenna.png / antenna_1.png    → Additional antenna test structures
+- dipole_moments_loop_antenna.png → Dipole moment schematic
+- fig1.png                       → (contents TBD)
+- EQC circuit diagrams           → generated via TikZ in LaTeX (eqc.txt)
+
+KEY EQUATIONS
+-------------
+|me| = |U1 + U2| · h / ZW
+|mm| = |U1 − U2| · h · Z0 / ZW
+  where: h = septum–DUT distance, ZW = 50 Ω, Z0 = 377 Ω
+
+EQC output voltages (superposition):
+  V'_{1,2}  = ±jωM·I_LA · [R_{1,2}||(1/jωC_{T1,2})] / [R_{1,2}||(1/jωC_{T1,2}) + jωL_{T1,2}]
+  V''_{1,2} = (I_k/2) · (1/R_{1,2}) / (1/R_{1,2} + jωC_{T1,2})
+
+KEY REFERENCES
+--------------
+[b1] B. Conley et al., "Shielding Methods for Gigahertz-Frequency Wideband
+     Analog-Integrated Circuits," IEEE Trans. EMC, Vol. 58, No. 4, 2016.
+[b2] D. Kreindl et al., "Measurement and Simulation Methodology for Characterizing
+     the Shielding Effectiveness of Coating Materials for Optical Sensors,"
+     EMC Europe 2023. [ACES2024_Kreindl_Official.pdf in filesystem]
+[b3] T. Ostermann & B. Deutschmann, "TEM-Cell and Surface Scan to Identify the
+     Electromagnetic Emission of ICs," GLSVLSI 2003.
+[b5] IEC 61967-8; IC Stripline Method. IEC, Geneva, 2013.
+[Chu] Chu, "Physical Limitations of Omni-Directional Antennas," 1948.
+[Balanis] Balanis, "Antenna Theory," 1997, p. 244 (loop antenna EQC).
+[Pozar] Pozar, "Microwave Engineering," 2012, p. 175 (reciprocity).
+
+OPEN QUESTIONS / NEXT STEPS
+----------------------------
+- Verify duplicate reference [O1]/[O2] (Ostermann & Deutschmann) — same citation twice?
+- Read Documentation.pdf for TEM cell measurement chapter details.
+- Confirm EQC parameter values (C_k, L_A, C_A) are finalized for both antennas.
+- Generate final comparison plots (FEM vs. EQC) using scripts in /scripts folder.
+- Typo fix in CEFC2026_Bauernfeind.tex: "Domink" → "Dominik" Kreindl.
+- Confirm CEFC 2026 two-page paper format requirements.

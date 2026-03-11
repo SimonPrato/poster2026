@@ -1,0 +1,479 @@
+\subsubsection{Equivalent circuit model}\label{sec:monopole_eqc}
+\FloatBarrier
+
+Equivalent circuit models are valuable tools for further analysis, as they allow 
+the coupling mechanisms between the antenna and the TEM cell to be expressed in 
+terms of measurable lumped circuit parameters. For the monopole antenna, the 
+dominant coupling mechanism is capacitive: the open-ended wire accumulates charge, 
+drives a displacement current toward the septum, and couples to the TEM mode. 
+The antenna's impedance behavior is therefore modeled by an RLC series circuit 
+for a short electric dipole \cite[p.~8]{Chu_1948}, as shown in 
+\autoref{fig:eqc_simple_monopole}. In this circuit, the capacitance $C_A$ 
+dominates the antenna impedance at low frequencies, the inductance $L_A$ 
+represents the stored magnetic energy near the wire, and the resistance $R_A$ 
+accounts for radiated power. At low frequencies, $L_A$ is short-circuited by 
+the low reactance of $C_A$, so that the voltage drops predominantly across $C_A$ 
+\cite[p.~8]{Chu_1948}. As frequency increases, the influence of the radiation 
+resistance $R_A$ grows and the overall impedance falls, consistent with the 
+capacitively dominated behavior discussed in \cref{sec:monopole_impedance}.
+
+\begin{figure}[h]
+	\centering
+	\resizebox{0.35\textwidth}{!}{
+\begin{tikzpicture}
+	% Capacitor in series
+	\draw (7, 8) to[capacitor, l={$C_A$}] (8.75, 8);
+	
+	% Top horizontal wire connecting the two parallel branches
+	\draw (8.75, 8) -- (10.75, 8);
+	
+	% Inductor branch (left, vertical) with its own ground
+	\draw (8.75, 8) to[european inductor, l={$L_A$}] (8.75, 6);
+	\node[ground] at (8.75, 6){};
+	
+	% Resistor branch (right, vertical) with its own ground
+	\draw (10.75, 8) to[european resistor, l={$R_A$}] (10.75, 6);
+	\node[ground] at (10.75, 6){};
+	
+	% Input wire and arrow
+	\draw (7, 8) -- (6, 8);
+	\draw[-latex] (5, 8.5) -- (6.75, 8.5);
+	\node[shape=rectangle, minimum width=2.215cm, minimum height=0.965cm] 
+	at (6.534, 8.75){} node[anchor=north west, align=left, 
+	text width=1.827cm, inner sep=6pt] at (5.409, 9.25){$P_{in}$};
+\end{tikzpicture}
+	}
+	\caption{Equivalent circuit for a short electric dipole models 
+		the monopole antenna's behavior.}
+	\label{fig:eqc_simple_monopole}
+\end{figure}
+
+Of primary concern for further analysis are $L_A$ and $C_A$, which are determined with the antenna model placed on a PEC surface in free space, as demonstrated in \autoref{fig:free-space-monopole}. The feed current $I_{in}$ is computed according to \eqref{eqn:iin}. The inductance and capacitance are derived according to 
+\eqref{eqn:l_m_energy} and \eqref{eqn:c_e_energy}, which leads to 
+
+\begin{subequations}
+	\begin{equation}
+		L_A = 2\frac{W_m}{I_{LA}^2},
+	\end{equation}
+	\begin{equation}
+		C_A = 2\frac{W_c}{V_{CA}^2},
+	\end{equation}
+\end{subequations}
+
+where $V_{CA}$ denotes the voltage across the capacitor 
+$C_A$, and $I_{LA}$ denotes the current through the inductor $L_A$. The resulting capacitance equals $C_A=98.36\,\mathrm{fF}$, and the inductance amounts to $L_A=1.14\,\mathrm{nH}$. The resistance $R_A$ generally represents conduction and radiation losses. However, only radiation losses are relevant here, as conduction losses are non-existent due to the use of PECs. The resistance $R_A$ can thereby be derived solely from the effective current through the resistance $I_\mathrm{RA,eff}$ and the radiated power $P_\mathrm{rad}$ along the radiation boundary, as expressed in 
+
+\begin{equation}
+	R_A = \frac{P_\mathrm{rad}}{I_\mathrm{RA,eff}^2}.
+\end{equation}
+
+The resulting radiation resistance spans from the milliohm range up to 
+$0.9\,\Omega$ in the investigated frequency range and increases 
+quadratically with frequency.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{content/img/free-space-monopole}
+	\caption{Model of the monopole antenna connected to a feedpoint mounted 
+		on a PEC surface with a side length of $\lambda/2$ and height of $\lambda/4$, where $\lambda$ 
+		corresponds to the free-space wavelength of the smallest investigated frequency. This 
+		configuration enables the investigation of the monopole antenna reactance 
+		without influence of the TEM cell. Figure is not to scale.}
+	\label{fig:free-space-monopole}
+\end{figure}
+
+The antenna equivalent circuit is extended in \autoref{fig:full_circuit_monopole} 
+to incorporate the TEM cell's electrical characteristics, represented by a total inductance $L_T = L_{T1} + L_{T2}$ and capacitance 
+$C_T = C_{T1} + C_{T2}$, as derived in \cref{sec:tem_cell_model}. The components are split symmetrically ($L_{T1} = L_{T2}$ and $C_{T1} = C_{T2}$) to reflect the physical symmetry of the TEM cell. The source provides a constant input power $P_{in}=1\,\mathrm{W}$ and has a source resistance of $R_s=50\,\Omega$, representing the characteristic impedance of the feedpoint waveport in the simulation model.
+
+The capacitance $C_k$ models the 
+electric coupling path leading from the antenna to the TEM cell. Displacement current from the monopole antenna injects 
+charge into the TEM cell, driving the electric dipole moment $\mathbf{m}_e$ as 
+described in \cref{sec:el_small_antennas}. The mutual inductances $M_{A,T1}$ 
+and $M_{A,T2}$ model the magnetic coupling path. The magnetic flux shared between the antenna 
+inductance $L_A$ and the TEM cell inductances $L_{T1}$ and $L_{T2}$ induces 
+voltages across the septum, driving the magnetic dipole moment $\mathbf{m}_m$. 
+Together, these two elements fully represent the near-field power transfer to 
+the output ports,making the inclusion of a separate radiation resistance $R_A$ in the combined circuit unnecessary.
+
+Since the antenna and TEM cell inductors share magnetic flux, their branch 
+voltages are coupled. The relationship between the voltages and currents  
+for the three inductive branches is expressed as
+
+\begin{equation}
+	\mathbf{V} = j\omega \begin{bmatrix}
+		L_{A}     & M_{A,T1} & M_{A,T2} \\
+		M_{T1,A}  & L_{T1}   & 0 \\
+		M_{T2,A}  & 0        & L_{T2}
+	\end{bmatrix} \mathbf{I},
+\end{equation}
+
+where $\mathbf{I}=\left[ I_{LA}, I_{LT1}, I_{LT2} \right]^T$ denotes the 
+current vector and $\mathbf{V}=\left[ V_{LA}, V_{LT1}, V_{LT2} \right]^T$ 
+the voltage vector. The coupling is assumed to be reciprocal, as no active 
+devices or nonreciprocal media are present \cite[p.~175]{Pozar_2012}. The 
+mutual inductances are indicated in \autoref{fig:full_circuit_monopole} 
+by the dots next to the inductor symbols.
+
+%The key advantage of this approach is that the dipole moments can be derived directly from the equivalent circuit. The magnetic dipole moment $\mathbf{m}_m$ is obtained from the voltages induced by $L_{T1}$ and $L_{T2}$, respectively. Analogously, the electric dipole moment $\mathbf{m}_e$ is derived from the displacement current flowing through $C_k$. The following calculations demonstrate the derivation of the equivalent dipole moments for the monopole antenna for the TEM mode.
+
+\begin{figure}[htbp]
+	\centering
+	\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}
+	% Paths, nodes and wires:
+	\node[shape=circle, draw, line width=1pt, minimum width=0.965cm]
+	(N1) at (2.5, 10){} node[anchor=east] at (N1.west){$P_{in}$};
+	\node[ground] at (2.5, 9){};
+	\draw (2.5, 9) -- (2.5, 9.5);
+	\draw (2.5, 10.5) -- (2.5, 11) -- (4, 11);
+	\draw (4, 11) to[european resistor, l={$R_s$}] (6, 11);
+	
+	% C_A leads to the junction node
+	\draw (6, 11) to[capacitor, l={$C_A$}] (8, 11);
+	\draw[->] (6, 10.75) -- (6, 9.25) node[midway, right] {$V$};
+	\node[ground] at (6, 9){};
+	\node[above] at (6.25, 11){$I$};
+	\node[currarrow, rotate=0] at (6.25, 11){};
+	
+	% Junction node where L_A taps off vertically
+	\node[circ] at (8, 11){};
+	
+	% L_A placed vertically to ground (shunt element)
+	\draw (8, 11) to[european inductor, l_={$L_A$}, 
+	v^={\shortstack{$j\omega L_{A} I_{LA}$ \\ 
+			$+ j\omega M I_{LT1}$\\
+			$- j\omega M I_{LT2}$}}] (8, 9);
+	\node[ground] at (8, 9){};
+	
+	% Coupling dot on the right side, directly above the L_A label
+	\node[circ] at (7.5, 10.5){};
+	
+	% Horizontal wire continues from junction to C_k
+	\draw (8, 11) to[capacitor, l={$C_k$}, i={$I_k$}] (14.25, 11);
+	
+	\node[shape=rectangle, draw, line width=1pt,
+	dash pattern={on 4pt off 4pt}, minimum width=5.1cm,
+	minimum height=5cm] at (8.25, 10.5){};
+	\node[shape=rectangle, minimum width=5.215cm, minimum height=1.465cm]
+	at (8.375, 13.5){} node[anchor=north west, align=left,
+	text width=4.827cm, inner sep=6pt] at (5.75, 13.75){Antenna};
+	
+	\draw (14.25, 10) to[european inductor, l={$L_{T2}$}, v={$j\omega (L_{T2} I_{LT2} - M I_{LA})$}] (18, 10);
+	\draw (14.25, 12) to[european inductor, l={$L_{T1}$}, v={$j\omega (L_{T1} I_{LT1} + M I_{LA})$}] (18, 12);
+	\node[currarrow, rotate=0] at (18.25, 12){};
+	\node[above] at (18.25, 12){$I_{LT1}$};
+	\node[currarrow, rotate=0] at (18.25, 10){};
+	\node[above] at (18.25, 10){$I_{LT2}$};
+	\draw (14.25, 10) -| (14.25, 12);
+	\node[circ] at (14.25, 11){};
+	\draw (18.75, 10) to[capacitor, l={$C_{T2}$}] (18.75, 8);
+	\draw (23, 10) to[european resistor, l={$R_2$}, v={$V_2$}] (23, 8);
+	\node[ground] at (18.75, 8){};
+	\node[ground] at (20.5, 8){};
+	\node[circ] at (18.75, 10){};
+	\draw (18, 12) -- (22, 12);
+	\draw (20.5, 10) to[capacitor, l={$C_{T1}$}] (20.5, 8);
+	\node[ground] at (23, 8){};
+	\draw (25.5, 10) to[european resistor, l={$R_1$}, v={$V_1$}] (25.5, 8);
+	\node[ground] at (25.5, 8){};
+	\draw (22, 12) -- (24.5, 12);
+	\draw (20.5, 10) -- (20.5, 12);
+	\node[jump crossing] at (20.5, 10){};
+	\draw (18, 10) -- (20.36, 10);
+	\draw (20.64, 10) -- (23, 10);
+	\draw (24.5, 12) -| (25.5, 10);
+	\node[circ] at (20.5, 12){};
+	\node[shape=rectangle, draw, line width=1pt,
+	dash pattern={on 4pt off 4pt}, minimum width=7.965cm,
+	minimum height=5.715cm] at (17.75, 9.875){};
+	\node[shape=rectangle, minimum width=5.215cm, minimum height=1.465cm]
+	at (16.375, 12.75){} node[anchor=north west, align=left,
+	text width=4.827cm, inner sep=6pt] at (13.75, 13.5){TEM cell};
+	\node[shape=rectangle, minimum width=2.715cm, minimum height=0.965cm]
+	at (23.375, 10){} node[anchor=north west, align=left,
+	text width=2.327cm, inner sep=6pt] at (22, 10.5){output port 2};
+	\node[shape=rectangle, minimum width=2.715cm, minimum height=0.965cm]
+	at (26.875, 10){} node[anchor=north west, align=left,
+	text width=2.327cm, inner sep=6pt] at (25.5, 10.5){output port 1};
+	\node[circ] at (15.6, 12.5){};
+	\node[circ] at (16.75, 10.5){};
+\end{tikzpicture}
+	}
+	\caption{Circuit representing the TEM cell and the monopole antenna, with 
+		the additional components $C_k$ and $M_{A,T1}$, $M_{A,T2}$ modeling their 
+		near-field coupling behavior of the TEM mode.}
+	\label{fig:full_circuit_monopole}
+\end{figure}
+
+The coupling components $C_k$, $M_{A,T1}$, and $M_{A,T2}$ are determined by defining the input and output voltages according to the results obtained from numerical simulations and solving the circuit equations for these unknowns. For the monopole antenna under investigation, the mutual inductances are found to be negligible, $M_{A,T1} = M_{A,T2} = 0$, while the coupling capacitance is approximately $C_k \approx 1.68,\mathrm{pF}$.
+
+The equivalent dipole moments are extracted from the circuit using a two-step procedure for each coupling mechanism. The following description covers the general case, including magnetic coupling, even though the monopole antenna under investigation does not exhibit a magnetic dipole moment. Consequently, the procedure can be applied to arbitrary antennas.
+
+First, the relevant source quantity is determined. For the magnetic dipole moment, this quantity is the induced voltage across the septum inductances $L_{T1}$ and $L_{T2}$. For the electric dipole moment, it is the displacement current injected through the coupling capacitance $C_k$. In the second step, Kirchhoff's laws are applied to determine the fraction of this quantity that reaches the termination resistances $R_1$ and $R_2$ at the output ports.
+
+The magnetic dipole moment $\mathbf{m}_m$ is given by \eqref{eqn:m_v}, which relates it to the voltage appearing across the termination resistances due to magnetic coupling. In the equivalent circuit, this coupling originates from the mutual inductances $M_{A,T1}$ and $M_{A,T2}$, which induce voltages across the TEM cell inductances $L_{T1}$ and $L_{T2}$. However, not all of this induced voltage appears across $R_1$ and $R_2$, since part of it drops across $L_{T1}$ and $L_{T2}$ themselves. Applying Kirchhoff's voltage law to the branch formed by $L_{T1}$, $C_{T1}$, and $R_1$ (and analogously to the $L_{T2}$, $C_{T2}$, $R_2$ branch) yields the voltage at the termination resistances required by \eqref{eqn:m_v}.
+
+The electric dipole moment $\mathbf{m}_e$ is expressed by \eqref{eqn:me_i}, which relates it to the current flowing through the termination resistances due to electric coupling. This current is obtained analogously by applying Kirchhoff's current law to determine the fraction of the displacement current injected into the TEM cell through the coupling capacitance $C_k$ that flows through $R_1$ and $R_2$.
+
+Consequently, the output voltages $V_{1,2}$ are determined separately for magnetic and electric coupling, resulting in the contributions $V'_{1,2}$ and $V''_{1,2}$, respectively:
+
+\begin{subequations}
+	\begin{equation}
+		V'_{1,2}=\pm j\omega MI_{LA} \frac{R_{1,2}\parallel(1/j\omega C_{T1,2})}{R_{1,2}\parallel(1/j\omega C_{T1,2})+j\omega L_{T1,2}},
+	\end{equation}
+	\begin{equation}
+		V''_{1,2} = \frac{I_k}{2}\frac{1/R_{1,2}}{1/R_{1,2}+j\omega C_{T1,2}},
+	\end{equation}
+\end{subequations}
+
+
+where the total output voltage follows from superposition $V_{1,2}=V'_{1,2}+V''_{1,2}$ and $R_{1,2}\parallel(1/j\omega C_{T1,2})$ denotes the parallel impedance of $R_{1,2}$ and $(1/j\omega C_{T1,2})$. The $\pm$ sign distinguishes between the
+voltage amplitudes propagating to waveport~1 ($V_1$) and waveport~2 ($V_2$).
+
+For both cases, the power dissipated at the termination resistances is computed separately. Its square root is then taken to obtain the wave amplitude normalized to $\sqrt{\mathrm{W}}$, as required by \eqref{eqn:m_v} and \eqref{eqn:me_i}. This yields the modal coefficients $a_\mathrm{TEM}$ and $b_\mathrm{TEM}$, given by
+
+\begin{subequations}
+	\begin{equation}
+		a_\mathrm{TEM} = \sqrt{V_1^2/R_1},
+	\end{equation}
+	\begin{equation}
+		b_\mathrm{TEM} = \sqrt{V_2^2/R_2}.
+	\end{equation}
+\end{subequations}
+
+Finally, the equivalent dipole moments are obtained from \eqref{eqn:m_v} and \eqref{eqn:me_i}. The resulting dipole moments for the monopole antenna are shown in \autoref{fig:eqc-dipoles-comp}.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\linewidth]{content/img/eqc-dipoles-comp}
+	\caption{Equivalent dipole moments derived by the equivalent circuit compared to the previously derived dipole moments of the monopole antenna, shown in \autoref{fig:dipolemomentsmonopolewide}. The electric dipole moment $\mathbf{m}_e$ is weighted with $\eta_0$ for 
+		comparison purposes.}
+	\label{fig:eqc-dipoles-comp}
+\end{figure}
+
+\FloatBarrier
+
+
+\subsubsection{Equivalent circuit model}\label{sec:eqc_loop}
+
+Following the same approach established for the monopole antenna in \cref{sec:monopole_eqc}, an 
+equivalent circuit is derived for the small loop antenna. 
+\autoref{fig:eqc_balanis} shows the full equivalent circuit for the 
+electrically small loop antenna in free space \cite[p.~244]{Balanis_1997}, 
+where
+
+\hspace{1cm}\begin{minipage}{\dimexpr\textwidth-2cm}
+	\begin{description}
+		\item[$C_s$]   Stray capacitance,
+		\item[$R_L$]   Ohmic loss resistance,
+		\item[$R_r$]   Radiation resistance,
+		\item[$L_i$]   Internal inductance,
+		\item[$L_e$]   External inductance.
+	\end{description}
+\end{minipage}
+
+As discussed in \cref{sec:antenna_model}, the antenna is modeled as a perfect 
+electric conductor, therefore $R_L$ and $L_i$ are neglected. Instead, the 
+simplified equivalent circuit in \autoref{fig:eqc_simple} is applied, where 
+$R_A$, $L_A$ and $C_A$ represent the remaining antenna components determining the impedance behavior of the antenna.
+
+\begin{figure}[tbp]
+	\centering
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\resizebox{0.7\textwidth}{!}{
+			\begin{tikzpicture}
+				% Paths, nodes and wires:
+				\draw (11.75, 6) to[european inductor, l={$L_{i}$}] (9.75, 6);
+				\draw (12, 2) to[european inductor, l_={$L_{e}$}] (12, 4);
+				\draw (7, 6) to[capacitor, l={$C_s$}] (7, 2);
+				\draw (12, 5.75) to[european resistor, l={$R_{r}$}] (12, 3.75);
+				\draw (9.25, 6) to[european resistor, l={$R_{L}$}] (7.25, 6);
+				\node[ground] at (7, 2){};
+				\node[ground] at (12, 2){};
+				\draw (7, 6) -- (5, 6);
+				\node[circ] at (7, 6){};
+				\draw (7, 6) -- (7.25, 6);
+				\draw (9.25, 6) -- (10, 6);
+				\draw (11.75, 6) -- (12, 6);
+				\draw (12, 5.75) -| (12, 6);
+				\draw[-latex] (5, 6.5) -- (6.75, 6.5);
+				\node[shape=rectangle, minimum width=2.215cm, 
+				minimum height=0.965cm] at (6.534, 6.75){} 
+				node[anchor=north west, align=left, text width=1.827cm, 
+				inner sep=6pt] at (5.409, 7.25){$P_{in}$};
+			\end{tikzpicture}
+		}
+		\caption{Full equivalent circuit \cite[p. 244]{Balanis_1997}}
+		\label{fig:eqc_balanis}
+	\end{subfigure}
+	\hfill
+	\hspace*{-0.5cm}
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\resizebox{0.65\textwidth}{!}{
+			\begin{tikzpicture}
+				% Paths, nodes and wires:
+				\draw (11, 3) to[european inductor, l_={$L_{A}$}] (11, 5);
+				\draw (7, 6) to[capacitor, l={$C_A$}] (7, 2);
+				\node[ground] at (7, 2){};
+				\node[ground] at (11, 2){};
+				\draw (7, 6) -- (5, 6);
+				\node[circ] at (7, 6){};
+				\draw (7, 6) -- (7.25, 6);
+				\draw[-latex] (5, 6.5) -- (6.75, 6.5);
+				\node[shape=rectangle, minimum width=2.215cm, 
+				minimum height=0.965cm] at (6.534, 6.75){} 
+				node[anchor=north west, align=left, text width=1.827cm, 
+				inner sep=6pt] at (5.409, 7.25){$P_{in}$};
+				\draw (11, 2) -| (11, 3);
+				\draw (7.25, 6) to[european resistor, l={$R_A$}] (11, 6);
+				\draw (11, 6) -- (11, 5);
+			\end{tikzpicture}
+		}
+		\caption{Reduced equivalent circuit}
+		\label{fig:eqc_simple}
+	\end{subfigure}
+	\caption{(a) shows the full equivalent circuit of the small loop antenna, accounting for several physical effects not needed for the purposes of this investigation. The reduced equivalent circuit in (b) is sufficient.}
+	\label{fig:eqc_loop}
+\end{figure}
+
+To determine $R_A$, $L_A$ and $C_A$, the antenna model is placed on a PEC 
+surface in an open space, as shown in \autoref{fig:free-space-loop}. 
+The inductance and capacitance are derived according to 
+\eqref{eqn:l_m_energy} and \eqref{eqn:c_e_energy}, which leads to
+
+\begin{subequations}
+	\begin{equation}
+		L_A = 2\frac{W_m}{I_{LA}^2},
+	\end{equation}
+	\begin{equation}
+		C_A = 2\frac{W_c}{V_{CA}^2},
+	\end{equation}
+\end{subequations}
+
+where $I_{LA}$ denotes the current through the inductor 
+$L_A$ and $V_{CA}$ denotes the voltage across the capacitor 
+$C_A$. The resulting capacitance and inductance equal $C_A=38.2\,\mathrm{fF}$ 
+and $L_A=2.14\,\mathrm{nH}$. 
+
+\begin{figure}[tbp]
+	\centering
+	\includegraphics[width=0.7\linewidth]{content/img/free-space-loop}
+	\caption{Model of the loop antenna connected to a feedpoint mounted on a 
+		PEC surface with a side length of $\lambda/2$, where $\lambda$ corresponds 
+		to the free-space wavelength of the solution frequency. This configuration 
+		enables the investigation of the loop antenna reactance without influence 
+		of the TEM cell. Figure is not to scale.}
+	\label{fig:free-space-loop}
+\end{figure}
+
+The equivalent dipole moments are extracted from the circuit following 
+the same two-step procedure described in \cref{sec:monopole_eqc}: first, 
+the induced voltage across $L_{T1}$ and $L_{T2}$ and the displacement 
+current through $C_k$ are identified as the source quantities for 
+$\mathbf{m}_m$ and $\mathbf{m}_e$, respectively. Then, Kirchhoff's laws 
+are applied to determine the fraction of each quantity reaching the 
+termination resistances $R_1$ and $R_2$. Unlike the monopole antenna, 
+both the electric and the magnetic coupling mechanisms are active here, as the loop antenna exhibits a significant magnetic dipole moment in addition to the electric one.
+
+The antenna equivalent circuit is extended with the TEM cell coupling model 
+introduced in \cref{sec:tem_cell_model}, as shown in \autoref{fig:full_circuit_loop}. The coupling components $C_k$, $M_{A,T1}$ and $M_{A,T2}$ are defined analogously to the equivalent circuit of the monopole antenna in \cref{sec:monopole_eqc}.
+
+\begin{figure}[htbp]
+	\centering
+	\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}
+	% Paths, nodes and wires:
+	\node[shape=circle, draw, line width=1pt, minimum width=0.965cm]
+	(N1) at (2.5, 9.5){} node[anchor=east] at (N1.west){$P_\mathrm{in}$};
+	\node[ground] at (2.5, 8){};
+	\draw (2.5, 9) -| (2.5, 8);
+	\draw (3.5, 11) to[european resistor, l={$R_s$}] (5, 11);
+	\draw (7, 11) to[capacitor, l_={$C_A$}] (7, 8);
+	\node[ground] at (7, 8){};
+	\draw (2.5, 10) -| (2.5, 11) -- (3.5, 11);
+	\draw (5, 11) -- (7.5, 11) -- (11, 11);
+	\draw (13.5, 11) -- (14.25, 11);
+	\node[above] at (6.5, 11){$I$};
+	\node[currarrow, rotate=0] at (6.5, 11){};
+	\draw[->] (5.75, 10.75) -- (5.75, 8.25) node[midway, left] {$V$};
+	\node[ground] at (5.75, 8){};
+	\node[circ] at (7, 11){};
+	\node[circ] at (8, 10){};
+	\node[shape=rectangle, draw, line width=1pt, 
+	dash pattern={on 4pt off 4pt}, minimum width=6.2cm, 
+	minimum height=5.715cm] at (8.25, 10){};
+	\node[shape=rectangle, minimum width=5.215cm, minimum height=1.465cm] 
+	at (7.575, 11.5){} node[anchor=north west, align=left, 
+	text width=4.827cm, inner sep=6pt] at (4.75, 13.5){Antenna};
+	\draw (8.5, 11) to[european inductor, l_={$L_A$}, v^={\shortstack{$j\omega L_{A} I_{LA}$ \\ 
+			$+ j\omega M I_{LT1}$\\
+			$- j\omega M I_{LT2}$}}] (8.5, 8);
+	\node[ground] at (8.5, 8){};
+	\draw (10, 11) to[capacitor, l={$C_k$}, i={$I_k$}] (13.5, 11);
+	\draw (14.25, 10) to[european inductor, l={$L_{T2}$}, v={$j\omega (L_{T2} I_{T2} - M I_{LA})$}] (18, 10);
+	\draw (14.25, 12) to[european inductor, l={$L_{T1}$}, v={$j\omega (L_{T1} I_{T1} + M I_{LA})$}] (18, 12);
+	\node[currarrow, rotate=0] at (18.25, 12){};
+	\node[above] at (18.25, 12){$I_{LT1}$};
+	\node[currarrow, rotate=0] at (18.25, 10){};
+	\node[above] at (18.25, 10){$I_{LT2}$};
+	\draw (14.25, 10) -| (14.25, 12);
+	\node[circ] at (14.25, 11){};
+	\draw (18.75, 10) to[capacitor, l={$C_{T2}$}] (18.75, 8);
+	\draw (23, 10) to[european resistor, l={$R_2$}, v={$V_2$}] (23, 8);
+	\node[ground] at (18.75, 8){};
+	\node[ground] at (20.5, 8){};
+	\node[circ] at (18.75, 10){};
+	\draw (18, 12) -- (22, 12);
+	\draw (20.5, 10) to[capacitor, l={$C_{T1}$}] (20.5, 8);
+	\node[ground] at (23, 8){};
+	\draw (25.5, 10) to[european resistor, l={$R_1$}, v={$V_1$}] (25.5, 8);
+	\node[ground] at (25.5, 8){};
+	\draw (22, 12) -- (24.5, 12);
+	\draw (20.5, 10) -- (20.5, 12);
+	\node[jump crossing] at (20.5, 10){};
+	\draw (18, 10) -- (20.36, 10);
+	\draw (20.64, 10) -- (23, 10);
+	\draw (24.5, 12) -| (25.5, 10);
+	\node[circ] at (20.5, 12){};
+	\node[shape=rectangle, draw, line width=1pt, 
+	dash pattern={on 4pt off 4pt}, minimum width=7.865cm, 
+	minimum height=5.715cm] at (17.75, 9.875){};
+	\node[shape=rectangle, minimum width=5.215cm, minimum height=1.465cm] 
+	at (13.75, 12.75){} node[anchor=north west, align=left, 
+	text width=4.827cm, inner sep=6pt] at (13.85, 13.5){TEM cell};
+	\node[shape=rectangle, minimum width=2.715cm, minimum height=0.965cm] 
+	at (23.375, 10){} node[anchor=north west, align=left, 
+	text width=2.327cm, inner sep=6pt] at (22, 10.5){output port 2};
+	\node[shape=rectangle, minimum width=2.715cm, minimum height=0.965cm] 
+	at (26.875, 10){} node[anchor=north west, align=left, 
+	text width=2.327cm, inner sep=6pt] at (25.5, 10.5){output port 1};
+	\node[circ] at (15.5, 12.5){};
+	\node[circ] at (16.75, 10.5){};
+\end{tikzpicture}
+	}
+	\caption{Circuit representing the TEM cell and the loop antenna, with the 
+		additional components $C_k$ and $M_{A,T1}$, $M_{A,T2}$ modeling their 
+		near-field coupling behavior of the TEM mode.}
+	\label{fig:full_circuit_loop}
+\end{figure}
+
+The resulting $\mathbf{m}_e$ and $\mathbf{m}_m$ are depicted in 
+\autoref{fig:loopeqcmoments}, which are similar to the dipole moments 
+derived by the simulator in the higher end of the frequency range. However, accuracy recedes in the low-frequency range. This deviation is likely attributable to numerical inaccuracies in the extracted lumped circuit parameters, whose influence is most pronounced at low frequencies where the dipole moment magnitudes are small.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\linewidth]{content/img/loop_eqc_moments}
+	\caption{Equivalent dipole moments derived by the equivalent circuit 
+		depicted in \autoref{fig:full_circuit_loop}, compared to the dipole moments 
+		of the loop antenna, shown in \autoref{fig:dipole_moments_loop_antenna}. 
+		The electric dipole moment $\mathbf{m}_e$ is weighted with $\eta_0$ for 
+		comparison purposes.}
+	\label{fig:loopeqcmoments}
+\end{figure}
+
+
+\FloatBarrier

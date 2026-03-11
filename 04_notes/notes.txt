@@ -1,0 +1,1 @@
+VCSEL device needs to emit light. No shielding possible. Investigation of coupling effects

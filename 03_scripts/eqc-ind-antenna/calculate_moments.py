@@ -49,23 +49,26 @@ def calc(output_power, output_voltage_phase_1, output_voltage_phase_2,
     i_lt1 = i_r1 + i_ct1
     i_lt2 = i_r2 + i_ct2
     i_ck = i_lt1 + i_lt2
-    i_la = i - i_ca
+    i_la = i - i_ca - i_ck
     u_la = i_la * 2 * np.pi * frequency * la
-    i_ma = i_la - i_ck
     r_c_parallel = 1/(1/50+1j*2*np.pi*frequency*ct)
     u_lt1 = 1j * 2 * np.pi * frequency * lt * i_lt1 # Note: Without induced voltage considered
     u_lt2 = 1j * 2 * np.pi * frequency * lt * i_lt2 # Note: Without induced voltage considered
     # induced voltage across septum inductors:
-    induced_voltage = np.sqrt((((u_1 - u_2) - (- u_lt1 + u_lt2)) * r_c_parallel/(1j * 2*np.pi*frequency*lt+r_c_parallel))**2/50)
-    m = (induced_voltage / 2 - 1j * 2 * np.pi * frequency * i_lt1 * lt ) / (1j * 2 * np.pi * frequency * i_la) # Probably to be corrected
-    inductive_power = np.conj(i_la) * input_voltage * np.cos(np.angle(i_la))
-    a_minus_b = induced_voltage
+    induced_voltage = (u_1 - u_2) - (- u_lt1 + u_lt2)
+    inductive_power = np.sqrt((((u_1 - u_2) - (- u_lt1 + u_lt2)) * r_c_parallel/(1j * 2*np.pi*frequency*lt+r_c_parallel))**2/50)
+    m = (u_lt1 + induced_voltage / 2 - 1j*2*np.pi*frequency*lt*i_lt1) / (1j * 2*np.pi*frequency * i_la)
+    v_ck = input_voltage + induced_voltage / 2 - u_lt1 - u_1
+    z_k = v_ck / i_ck
+    r_k = np.real(z_k)
+    c_k = - 1 / (2 * np.pi * frequency * np.imag(z_k))
+    a_minus_b = inductive_power
     # Note: Effective voltages are used here
     equ_mag_dipole_moment = 1j * a_minus_b / (416.6666* 2 * np.pi * frequency) * 299792458 * 2 * np.pi * frequency * 1.256637 * pow(10.0,-6)
-    a_plus_b = np.sqrt((i_ck * 1/50 / (1/50 + 1j * 2 * np.pi * frequency * ct))**2 * 50) 
+    a_plus_b = np.sqrt((i_ck * 1/50 / (1/50 + 1j * 2 * np.pi * frequency * ct))**2 * 50)
     equ_ele_dipole_moment = a_plus_b / 416.6666
-    variables = [i_ca, i, i_r1, i_r2, i_ct1, i_ct2, i_lt1, i_lt2, i_ck, i_la, m, equ_mag_dipole_moment, equ_ele_dipole_moment, 1e12 * ct, 1e12 * lt, 1e12 * ca, 1e12 * la, u_1, u_2, input_impedance, induced_voltage]
-    names = ['i_ca', 'i', 'i_r1', 'i_r2', 'i_ct1', 'i_ct2', 'i_lt1', 'i_lt2', 'i_ck', 'i_la', 'm', 'equ_mag_dipole_moment', 'equ_ele_dipole_moment', 'ct', 'lt', 'ca', 'la', 'u_1', 'u_2', 'input_impedance', 'induced_voltage']
+    variables = [i_ca, i, i_r1, i_r2, i_ct1, i_ct2, i_lt1, i_lt2, i_ck, i_la, m, z_k, r_k, c_k, equ_mag_dipole_moment, equ_ele_dipole_moment, 1e12 * ct, 1e12 * lt, 1e12 * ca, 1e12 * la, u_1, u_2, input_impedance, induced_voltage]
+    names = ['i_ca', 'i', 'i_r1', 'i_r2', 'i_ct1', 'i_ct2', 'i_lt1', 'i_lt2', 'i_ck', 'i_la', 'm', 'z_k', 'r_k', 'c_k', 'equ_mag_dipole_moment', 'equ_ele_dipole_moment', 'ct', 'lt', 'ca', 'la', 'u_1', 'u_2', 'input_impedance', 'induced_voltage']
 
     print(f"======================================================\nfreq: {frequency/1e9}\n input voltage: {input_voltage}\n output power: {output_power}\noutput voltage: {np.abs(u_1)}")
     for name, var in zip(names, variables):
@@ -73,9 +76,9 @@ def calc(output_power, output_voltage_phase_1, output_voltage_phase_2,
             mag = np.abs(var)
             angle_rad = np.angle(var)
             angle_deg = np.degrees(angle_rad)
-            print(f"{name:15}: |{mag:8.8f}| ∠{angle_deg:7.5f}° ({angle_rad:7.4f} rad)")
+            print(f"{name:15}: |{mag:8.18f}| ∠{angle_deg:7.5f}° ({angle_rad:7.4f} rad)")
         else:
-            print(f"{name:15}: {var:8.8f} (real)")
+            print(f"{name:15}: {var:8.18f} (real)")
 
     # Also print real scalars
     print(f"inductive_power      : {inductive_power:.4f}")
@@ -102,6 +105,7 @@ def calc(output_power, output_voltage_phase_1, output_voltage_phase_2,
         'i_ck': i_ck,
         'i_la': i_la,
         'm': m,
+        'c_k': c_k,
         'inductive_power': inductive_power,
         'a_minus_b': a_minus_b,
         'equ_mag_dipole_moment': equ_mag_dipole_moment,

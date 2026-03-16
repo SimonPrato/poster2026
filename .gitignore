@@ -1,0 +1,93 @@
+# =============================================================
+# poster2026 — .gitignore
+# =============================================================
+
+# -------------------------------------------------------------
+# OS / Editor junk
+# -------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# -------------------------------------------------------------
+# LaTeX build artifacts
+# -------------------------------------------------------------
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+_minted-*/
+
+# Compiled paper PDF (regenerated from source)
+02_paper/build/
+02_paper/*.pdf
+
+# -------------------------------------------------------------
+# Python (03_scripts)
+# -------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+.venv
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Matplotlib / generated plots
+*.png
+*.svg
+*.eps
+
+# -------------------------------------------------------------
+# LTspice simulation outputs (06_spice)
+# -------------------------------------------------------------
+06_spice/*.raw
+06_spice/*.log
+06_spice/*.net
+06_spice/*.op.raw
+
+# -------------------------------------------------------------
+# 04_notes — personal working notes (not for the repo)
+# -------------------------------------------------------------
+04_notes/notes.txt
+04_notes/plan.txt
+04_notes/eqc.txt
+04_notes/README.md
+04_notes/Ideen_fuer_extendedAbstract.pdf
+
+# Or ignore the whole folder:
+# 04_notes/
+
+# -------------------------------------------------------------
+# Large binary reference / template files
+# -------------------------------------------------------------
+01_references/
+05_templates/*.pdf
+05_templates/*.zip
+
+# Keep the extracted template directory (source files useful)
+!05_templates/latextemplate_extracted/

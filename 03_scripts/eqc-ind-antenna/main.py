@@ -1,14 +1,40 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.interpolate import interp1d
 from calculate_moments import calc
 
+# === Common interpolation frequency axis ===
+FREQ_START_GHZ  = 1e-3   # 1 MHz
+FREQ_STOP_GHZ   = 3.0    # 3 GHz
+FREQ_NUM_POINTS = 1000
+FREQ_AXIS_GHZ   = np.linspace(FREQ_START_GHZ, FREQ_STOP_GHZ, FREQ_NUM_POINTS)
+FREQ_AXIS_HZ    = FREQ_AXIS_GHZ * 1e9
 
-def load_csv_column(file_path, column_index, skiprows=1):
-    """Load a specific column from a CSV file as a NumPy array."""
+
+def load_csv_column(file_path, column_index, skiprows=1, unwrap_phase=False):
+    """
+    Load a column from a CSV file, interpolating onto the shared 1 MHz–3 GHz
+    frequency axis (1000 points, linear interpolation).
+
+    Column 0 is always treated as the frequency axis (GHz).
+    Requesting column_index=0 returns FREQ_AXIS_GHZ directly.
+    Any other column_index is interpolated onto FREQ_AXIS_GHZ.
+
+    Set unwrap_phase=True for phase columns to correct ±π wrap-arounds
+    before interpolation.
+    """
     data = pd.read_csv(file_path, header=None, dtype=float, skiprows=skiprows)
-    columns = [data[col].to_numpy()[1:] for col in data.columns]
-    return columns[column_index]
+    columns = [data[col].to_numpy() for col in data.columns]
+
+    if column_index == 0:
+        return FREQ_AXIS_GHZ
+
+    freq_raw = columns[0]
+    col_raw  = np.unwrap(columns[column_index]) if unwrap_phase else columns[column_index]
+
+    interp_fn = interp1d(freq_raw, col_raw, kind='linear', assume_sorted=False)
+    return interp_fn(FREQ_AXIS_GHZ)
 
 
 def compute_dipole_moments(frequencies, output_power, s_phase_1,
@@ -96,26 +122,28 @@ def main():
     antenna_name = "loop"  # Example: rename this to your actual antenna label
 
     # Load antenna free-space data
-    antenna_capacitance = load_csv_column('data/loop-free-space/capacitance.csv', 2)
-    antenna_inductance = load_csv_column('data/loop-free-space/inductance.csv', 2)
-    frequencies = load_csv_column('data/loop-free-space/capacitance.csv', 1) * 1e9
+    # All CSV files now have Freq [GHz] as col 0, data value(s) from col 1 onward
+    antenna_capacitance  = load_csv_column('data/loop-free-space/capacitance.csv', 1)
+    antenna_inductance   = load_csv_column('data/loop-free-space/inductance.csv',  1)
+    frequencies          = load_csv_column('data/loop-free-space/capacitance.csv', 0) * 1e9
 
     # Load TEM cell (empty) data
-    tem_cell_capacitance = load_csv_column('data/tem-cell-empty/capacitance.csv', 2)
-    tem_cell_inductance = load_csv_column('data/tem-cell-empty/inductance.csv', 2)
+    tem_cell_capacitance = load_csv_column('data/tem-cell-empty/capacitance.csv', 1)
+    tem_cell_inductance  = load_csv_column('data/tem-cell-empty/inductance.csv',  1)
 
     # Load loop-in-TEM-cell data
     impedance_magnitude = load_csv_column('data/loop-tem-cell/impedance.csv', 1)
     impedance_phase_deg = load_csv_column('data/loop-tem-cell/impedance.csv', 2)
     antenna_tem_impedance = impedance_magnitude * np.exp(1j * np.deg2rad(impedance_phase_deg))
 
-    s_param_mag = load_csv_column('data/loop-tem-cell/magnitude.csv', 1)
+    s_param_mag  = load_csv_column('data/loop-tem-cell/magnitude.csv', 1)
     output_power = np.power(10.0, s_param_mag / 10)  # Assuming 1W input power
     print(output_power)
 
-    wp1_voltage_phase = load_csv_column('data/loop-tem-cell/phase.csv', 2) 
-    wp2_voltage_phase = load_csv_column('data/loop-tem-cell/phase.csv', 3) 
-    antenna_voltage_phase = load_csv_column('data/loop-tem-cell/phase.csv', 4) 
+    # phase.csv cols: 0=Freq, 1=wp1_ez_phase, 2=wp2_ez_phase, 3=atan(voltage)
+    wp1_voltage_phase     = load_csv_column('data/loop-tem-cell/phase.csv', 1, unwrap_phase=True)
+    wp2_voltage_phase     = load_csv_column('data/loop-tem-cell/phase.csv', 2, unwrap_phase=True)
+    antenna_voltage_phase = load_csv_column('data/loop-tem-cell/phase.csv', 3, unwrap_phase=True)
     phase_shift_1 = wp1_voltage_phase - antenna_voltage_phase
     phase_shift_2 = wp2_voltage_phase - antenna_voltage_phase
 

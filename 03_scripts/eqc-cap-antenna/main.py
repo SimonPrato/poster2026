@@ -94,26 +94,27 @@ def main():
     antenna_name = "monopole"  # Updated name
 
     # Load antenna free-space data (updated paths)
-    antenna_capacitance = load_csv_column(f'data/{antenna_name}-free-space/capacitance.csv', 2)
-    antenna_inductance = load_csv_column(f'data/{antenna_name}-free-space/inductance.csv', 2)
-    frequencies = load_csv_column(f'data/{antenna_name}-free-space/capacitance.csv', 1) * 1e9
+    # All CSV files now have Freq [GHz] as col 0, data value(s) from col 1 onward
+    antenna_capacitance  = load_csv_column(f'data/{antenna_name}-free-space/capacitance.csv', 1)
+    antenna_inductance   = load_csv_column(f'data/{antenna_name}-free-space/inductance.csv',  1)
+    frequencies          = load_csv_column(f'data/{antenna_name}-free-space/capacitance.csv', 0) * 1e9
 
     # Load TEM cell (empty) data
-    tem_cell_capacitance = load_csv_column('data/tem-cell-empty/capacitance.csv', 2)
-    tem_cell_inductance = load_csv_column('data/tem-cell-empty/inductance.csv', 2)
+    tem_cell_capacitance = load_csv_column('data/tem-cell-empty/capacitance.csv', 1)
+    tem_cell_inductance  = load_csv_column('data/tem-cell-empty/inductance.csv',  1)
 
-    # Load monopole-in-TEM-cell data (updated paths)
+    # Load monopole-in-TEM-cell data
     impedance_magnitude = load_csv_column(f'data/{antenna_name}-tem-cell/impedance.csv', 1)
     impedance_phase_deg = load_csv_column(f'data/{antenna_name}-tem-cell/impedance.csv', 2)
     antenna_tem_impedance = impedance_magnitude * np.exp(1j * np.deg2rad(impedance_phase_deg))
 
-    s_param_mag = load_csv_column(f'data/{antenna_name}-tem-cell/magnitude.csv', 1)
+    s_param_mag  = load_csv_column(f'data/{antenna_name}-tem-cell/magnitude.csv', 1)
     output_power = np.power(10.0, s_param_mag / 10)
 
-    # Updated paths for phase
-    wp1_voltage_phase = load_csv_column(f'data/{antenna_name}-tem-cell/phase.csv', 1) 
-    wp2_voltage_phase = load_csv_column(f'data/{antenna_name}-tem-cell/phase.csv', 2) 
-    antenna_voltage_phase = load_csv_column(f'data/{antenna_name}-tem-cell/phase.csv', 3) 
+    # phase.csv cols: 0=Freq, 1=ang_rad wp1, 2=ang_rad wp2, 3=e_phase_antenna
+    wp1_voltage_phase     = load_csv_column(f'data/{antenna_name}-tem-cell/phase.csv', 1)
+    wp2_voltage_phase     = load_csv_column(f'data/{antenna_name}-tem-cell/phase.csv', 2)
+    antenna_voltage_phase = load_csv_column(f'data/{antenna_name}-tem-cell/phase.csv', 3)
     phase_shift_1 = wp1_voltage_phase - antenna_voltage_phase
     phase_shift_2 = wp2_voltage_phase - antenna_voltage_phase
 

@@ -33,9 +33,8 @@ desktop.ini
 *.xdv
 _minted-*/
 
-# Compiled paper PDF (regenerated from source)
+# LaTeX build directory
 02_paper/build/
-02_paper/*.pdf
 
 # -------------------------------------------------------------
 # Python (03_scripts)
